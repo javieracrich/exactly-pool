@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.7;
 import "hardhat/console.sol";
-import "./Reward.sol";
+import "./RewardToken.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 // NOTE: This is just a test contract, please delete me
