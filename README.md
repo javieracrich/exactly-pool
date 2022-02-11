@@ -60,6 +60,7 @@ Using the hardhat-etherscan plugin, add Etherscan API key to hardhat.config.ts, 
 ## ASSUMPTIONS 
 
 -POOL REWARDS ARE A ERC20 TOKEN
+
 -RWD TOKEN INITTIAL SUPPLY IS ZERO
 
 ## ADDRESSES
