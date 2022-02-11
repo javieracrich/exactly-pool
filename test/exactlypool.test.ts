@@ -19,7 +19,7 @@ describe('Exactly Pool', () => {
   let participantB: Signer;
   let participantC: Signer;
   let signers: SignerWithAddress[];
-  let ratiodiv = 100_000_000_000;
+  let ratiodiv = BigNumber.from('10000000000000000000000000000000000000');
 
   beforeEach(async () => {
 
@@ -40,67 +40,67 @@ describe('Exactly Pool', () => {
     console.log("deployment finished successfully");
   })
 
-  // it('should have the right rewards', async () => {
-  //   const initialRewards = ethers.utils.parseEther('200');
-  //   pool = pool.connect(owner);
-  //   await pool.DepositRewards(initialRewards);
-  //   const rewards = await pool.GetRemainingRewards();
-  //   expect(rewards).to.eq(initialRewards);
-  // })
+  it('should have the right rewards', async () => {
+    const initialRewards = ethers.utils.parseEther('200');
+    pool = pool.connect(owner);
+    await pool.DepositRewards(initialRewards);
+    const rewards = await pool.GetRemainingRewards();
+    expect(rewards).to.eq(initialRewards);
+  })
 
-  // it('happy path with N participants', async () => {
+  it('happy path with N participants', async () => {
 
-  //   let participantCount = random(1, 19);
-  //   console.log("participantCount", participantCount);
-  //   let totalEth = BigNumber.from(0);
-  //   let rewards = ethers.utils.parseEther(random(100, 999).toString());
-  //   console.log("rewards", ethers.utils.formatEther(rewards).toString());
+    let participantCount = random(1, 19);
+    console.log("participantCount", participantCount);
+    let totalEth = BigNumber.from(0);
+    let rewards = ethers.utils.parseEther(random(100, 999).toString());
+    console.log("rewards", ethers.utils.formatEther(rewards).toString());
 
-  //   for (let i = 1; i <= participantCount; i++) {
-  //     let participant = signers[i];
-  //     let valueEth =  ethers.utils.parseEther(random(1, 100).toString());
-  //     totalEth = totalEth.add(valueEth);
-  //     await participant.sendTransaction({ value: valueEth, to: pool.address });
-  //     const partialBalance = await pool.totalBalance();
-  //     expect(partialBalance).to.eq(totalEth);
-  //     const balance = await pool.balances(await participant.getAddress());
-  //     expect(valueEth).to.eq(balance);
+    for (let i = 1; i <= participantCount; i++) {
+      let participant = signers[i];
+      let valueEth =  ethers.utils.parseEther(random(1, 100).toString());
+      totalEth = totalEth.add(valueEth);
+      await participant.sendTransaction({ value: valueEth, to: pool.address });
+      const partialBalance = await pool.totalBalance();
+      expect(partialBalance).to.eq(totalEth);
+      const balance = await pool.balances(await participant.getAddress());
+      expect(valueEth).to.eq(balance);
 
-  //   }
+    }
 
-  //   //owner deposits rewards
-  //   await pool.connect(owner).DepositRewards(rewards);
+    //owner deposits rewards
+    await pool.connect(owner).DepositRewards(rewards);
 
-  //   const expectedRewards = await pool.totalRewards();
+    const expectedRewards = await pool.totalRewards();
 
-  //   expect(expectedRewards).to.eq(rewards);
+    expect(expectedRewards).to.eq(rewards);
 
 
 
-  //   for (let i = 1; i <= participantCount; i++) {
-  //     let participant = signers[i];
-  //     const ratio = await pool.GetBalanceRatioForParticipant(await participant.getAddress());
-  //     const balance = await pool.balances(await participant.getAddress());
-  //     const expectedRatio = (balance.mul(ratiodiv)).div(totalEth).toNumber();
-  //     console.log("ratio", i, ratio.toNumber());
-  //     console.log("expectedRatio", i, expectedRatio);
-  //     expect(ratio).to.eq(expectedRatio);
-  //     let remainingRewards = await pool.connect(participant).GetRemainingRewardsForParticipant();
-  //     let expectedRemainingRewards = (rewards.mul(ratio)).div(ratiodiv);
-  //     expect(remainingRewards).to.eq(expectedRemainingRewards);
-  //     console.log("withdrawing", i, ethers.utils.formatEther(remainingRewards).toString());
-  //     await pool.connect(participant).WithdrawRewards();
-  //     remainingRewards = await pool.connect(participant).GetRemainingRewardsForParticipant();
-  //     expect(remainingRewards).to.eq(0);
-  //     const tokenBalance = await rewardToken.balanceOf(await participant.getAddress());
-  //     expect(tokenBalance).to.eq(rewards.mul(ratio).div(ratiodiv));
-  //   }
+    for (let i = 1; i <= participantCount; i++) {
+      let participant = signers[i];
+      const ratio = await pool.GetBalanceRatioForParticipant(await participant.getAddress());
+      const balance = await pool.balances(await participant.getAddress());
+      const expectedRatio = (balance.mul(ratiodiv)).div(totalEth).toNumber();
+      console.log("ratio", i, ratio.toNumber());
+      console.log("expectedRatio", i, expectedRatio);
+      expect(ratio).to.eq(expectedRatio);
+      let remainingRewards = await pool.connect(participant).GetRemainingRewardsForParticipant();
+      let expectedRemainingRewards = (rewards.mul(ratio)).div(ratiodiv);
+      expect(remainingRewards).to.eq(expectedRemainingRewards);
+      console.log("withdrawing", i, ethers.utils.formatEther(remainingRewards).toString());
+      await pool.connect(participant).WithdrawRewards();
+      remainingRewards = await pool.connect(participant).GetRemainingRewardsForParticipant();
+      expect(remainingRewards).to.eq(0);
+      const tokenBalance = await rewardToken.balanceOf(await participant.getAddress());
+      expect(tokenBalance).to.eq(rewards.mul(ratio).div(ratiodiv));
+    }
 
-  //   const remainingRewards = await pool.GetRemainingRewards();
-  //   console.log("remaining rewards", ethers.utils.formatEther(remainingRewards).toString());
-  //   console.log("participants withdrawn", (await pool.participantsWithdrawn()).toNumber());
-  //   expect(remainingRewards).to.below(ethers.utils.parseEther("0.00001"));
-  // })
+    const remainingRewards = await pool.GetRemainingRewards();
+    console.log("remaining rewards", ethers.utils.formatEther(remainingRewards).toString());
+    console.log("participants withdrawn", (await pool.participantsWithdrawn()).toNumber());
+    expect(remainingRewards).to.below(ethers.utils.parseEther("0.00001"));
+  })
 
 
 
@@ -142,7 +142,7 @@ describe('Exactly Pool', () => {
     expect(balanceA).to.eq(rewards);
 
     const remainingRewards = await pool.GetRemainingRewards();
-    expect(remainingRewards).to.eq(ethers.utils.parseEther('0'));
+    expect(remainingRewards).to.eq(0);
 
   })
 
@@ -169,6 +169,7 @@ describe('Exactly Pool', () => {
 
     for (let i = 1; i <= participantCount; i++) {
       const randomEthParticipation = ethers.utils.parseEther((Math.random() * 100).toString());
+      console.log("randomEthParticipation", i, ethers.utils.formatEther(randomEthParticipation));
 
       await signers[i].sendTransaction({ value: randomEthParticipation, to: pool.address });
       totalEth = totalEth.add(randomEthParticipation);
@@ -182,42 +183,51 @@ describe('Exactly Pool', () => {
 
     expect(totalBalance).to.eq(totalEth);
 
-    for (let i = 1; i <= rewardCycles; i++) {
+    for (let j = 1; j <= rewardCycles; j++) {
 
       IncreaseTime(Constants.Week);
-      console.log("reward cycle", i);
+      console.log("--starting reward cycle", j);
       //owner deposits rewards
       await pool.connect(owner).DepositRewards(rewards);
+      console.log("rewards deposited");
+      let r = await pool.GetRemainingRewards();
+      console.log("remaining rewards", ethers.utils.formatEther(r).toString());
 
- //     const expectedRewards = await pool.totalRewards();
+      for (let k = 1; k <= participantCount; k++) {
 
-  //    expect(expectedRewards).to.greaterThanOrEqual(rewards);
-
-      for (let i = 1; i <= participantCount; i++) {
-
-        let participant = signers[i];
+        let participant = signers[k];
+        let prevRewardBalance = await rewardToken.balanceOf(await participant.getAddress());
+        console.log("--start participant withdraw", k);
         const ratio = await pool.GetBalanceRatioForParticipant(await participant.getAddress());
         const balance = await pool.balances(await participant.getAddress());
-        const expectedRatio = (balance.mul(ratiodiv)).div(totalEth).toNumber();
-        console.log("ratio", i, ratio.toNumber());
-        console.log("expectedRatio", i, expectedRatio);
+        const expectedRatio = (balance.mul(ratiodiv)).div(totalEth).toBigInt();
+        console.log("ratio", k, ratio.toString());
+        console.log("expectedRatio", k, ethers.utils.formatEther(expectedRatio));
         expect(ratio).to.eq(expectedRatio);
         let remainingRewards = await pool.connect(participant).GetRemainingRewardsForParticipant();
+        console.log("remainingRewards", k, ethers.utils.formatEther(remainingRewards));
         let expectedRemainingRewards = (rewards.mul(ratio)).div(ratiodiv);
-     //   expect(remainingRewards).to.eq(expectedRemainingRewards);
-        console.log("withdrawing", i, ethers.utils.formatEther(remainingRewards).toString());
+        expect(remainingRewards.toString().substring(0, 17)).to.eq(expectedRemainingRewards.toString().substring(0, 17));
+        console.log("withdrawing", k, ethers.utils.formatEther(remainingRewards).toString());
         await pool.connect(participant).WithdrawRewards();
         remainingRewards = await pool.connect(participant).GetRemainingRewardsForParticipant();
         expect(remainingRewards).to.eq(0);
         const tokenBalance = await rewardToken.balanceOf(await participant.getAddress());
-        expect(tokenBalance).to.eq(rewards.mul(ratio).div(ratiodiv));
+        const expectedBalance = ((rewards.mul(ratio)).div(ratiodiv)).add(prevRewardBalance);
+        prevRewardBalance = expectedBalance;
+
+        console.log("tokenBalance", ethers.utils.formatEther(tokenBalance));
+        console.log("expectedBalance", ethers.utils.formatEther(expectedBalance));
+
+        expect(ethers.utils.formatEther(tokenBalance).toString().substring(0, 18)).
+         to.eq(ethers.utils.formatEther(expectedBalance).toString().substring(0, 18));
 
       }
 
       const remainingRewards = await pool.GetRemainingRewards();
       console.log("remaining rewards", ethers.utils.formatEther(remainingRewards).toString());
       console.log("participants withdrawn", (await pool.participantsWithdrawn()).toNumber());
-      expect(remainingRewards).to.below(ethers.utils.parseEther("0.00001"));
+      expect(remainingRewards).to.be.below(ethers.utils.parseEther("0.0000000000001"));
 
 
     }

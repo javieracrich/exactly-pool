@@ -21,7 +21,7 @@ contract ExactlyPool is Ownable {
     uint256 public totalRewards = 0;
     uint256 public frequency = 1 weeks;
     uint256 public time = 0;
-    uint256 private hundred = 100_000_000_000;
+    uint256 private ratiodiv = 10000000000000000000000000000000000000;
 
     constructor(RewardToken _rewardToken) {
         rewardToken = _rewardToken;
@@ -49,8 +49,7 @@ contract ExactlyPool is Ownable {
         }
 
         uint256 ratio = GetBalanceRatioForParticipant(_msgSender());
-        uint256 rewardsToWithdraw = (originalTotalRewards * ratio) / hundred;
-        return rewardsToWithdraw;
+        return (originalTotalRewards * ratio) / ratiodiv;
     }
 
     // only for testing purposes, remove for production
@@ -104,7 +103,7 @@ contract ExactlyPool is Ownable {
         if (depositTimestamp[_participant] > depositTimestamp[owner()]) {
             return 0;
         } else {
-            return (balances[_participant] * hundred) / originalBalance;
+            return (balances[_participant] * ratiodiv) / originalBalance;
         }
     }
 }
